@@ -1,0 +1,15 @@
+[package]
+name = "winding_road_native"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "winding_road_native"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "2"
+
+[profile.release]
+opt-level = 3
+lto = true

@@ -1,0 +1,32 @@
+name: winding_road
+description: "Winding Road - motorcycle route app"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  flutter_riverpod: ^3.3.1
+  riverpod_annotation: ^4.0.2
+  geolocator: ^14.0.2
+  slider_button: ^3.1.0
+  vibration: ^3.1.8
+  shared_preferences: ^2.5.3
+  intl: ^0.20.2
+  sunrise_sunset_calc: ^3.0.0
+  flutter_rust_bridge: ^2.12.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
