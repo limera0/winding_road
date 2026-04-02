@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../models/poi.dart';
 import '../models/user_profile.dart';
 import '../models/saved_route.dart';
+import '../services/poi_service.dart';
 import '../services/profile_service.dart';
 import '../services/route_service.dart';
 import '../services/daylight_service.dart';
@@ -101,6 +103,22 @@ final daylightTimesProvider =
   );
   return r;
 });
+
+// ── POI ───────────────────────────────────────────────────────
+
+final poiServiceProvider = Provider((_) => PoiService());
+
+/// 현재 지도에 표시 중인 POI 목록 (스냅 후 업데이트)
+final poiListProvider =
+    NotifierProvider<_PoiListNotifier, List<Poi>>(_PoiListNotifier.new);
+
+class _PoiListNotifier extends Notifier<List<Poi>> {
+  @override
+  List<Poi> build() => [];
+
+  void set(List<Poi> pois) => state = pois;
+  void clear() => state = [];
+}
 
 // ── Route type filter ─────────────────────────────────────────
 
