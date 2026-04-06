@@ -8,9 +8,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../providers/app_providers.dart';
-import '../widgets/daylight_bar.dart';
-import 'main_map_screen.dart' show kDefaultOrigin;
+import '../features/map/providers/map_providers.dart';
+import '../core/widgets/daylight_bar.dart';
+
+const LatLng kDefaultOrigin = LatLng(37.5665, 126.9780);
 
 // ── 다크 모드 색상 팔레트 ─────────────────────────────────────
 const _kBg          = Color(0xFF0D0D0D);
@@ -392,10 +393,10 @@ class _DrivingScreenState extends ConsumerState<DrivingScreen>
             bottom: 110,
             child: DaylightBar(
               progress: daylightProgress,
-              bmntLabel: daylightTimes != null
+              sunriseLabel: daylightTimes != null
                   ? DateFormat('HH:mm').format(daylightTimes.bmnt)
                   : '--:--',
-              eentLabel: daylightTimes != null
+              sunsetLabel: daylightTimes != null
                   ? DateFormat('HH:mm').format(daylightTimes.eent)
                   : '--:--',
             ),

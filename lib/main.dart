@@ -2,32 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'screens/intro_screen.dart';
+import 'core/theme/app_theme.dart';
+import 'features/auth/presentation/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const ProviderScope(child: WindingRoadApp()));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+  runApp(const ProviderScope(child: YuruNaviApp()));
 }
 
-class WindingRoadApp extends StatelessWidget {
-  const WindingRoadApp({super.key});
+class YuruNaviApp extends StatelessWidget {
+  const YuruNaviApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Winding Road',
+      title: 'YuruNavi',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: const Color(0xFF008080),
-        fontFamily: 'Roboto',
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          centerTitle: true,
-        ),
-      ),
-      home: const IntroScreen(),
+      theme: AppTheme.light,
+      home: const SplashScreen(),
     );
   }
 }

@@ -1,5 +1,5 @@
-name: winding_road
-description: "Winding Road - motorcycle route app"
+name: yurunavi
+description: "YuruNavi (유루나비) - 이륜차 전용 감성 내비게이션"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -23,6 +23,7 @@ dependencies:
   sunrise_sunset_calc: ^3.0.0
   flutter_rust_bridge: ^2.12.0
   http: ^1.2.2
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -31,3 +32,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: PlusJakartaSans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/PlusJakartaSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/PlusJakartaSans-ExtraBold.ttf
+          weight: 800

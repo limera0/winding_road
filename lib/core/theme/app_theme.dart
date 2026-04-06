@@ -1,0 +1,390 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// ── YuruNavi Design Token ─────────────────────────────────────────────────────
+
+class AppColors {
+  AppColors._();
+
+  // Brand
+  static const primary = Color(0xFFF28C28);    // Orange – action, active
+  static const secondary = Color(0xFF1A2B3C);  // Dark Navy – appbar, text
+  static const tertiary = Color(0xFF00B1F0);   // Light Blue – highlights
+
+  // Background / Surface
+  static const background = Color(0xFFF9F7F2); // Off-white scaffold
+  static const surface = Colors.white;
+  static const surfaceVariant = Color(0xFFF2F0EB);
+
+  // Text
+  static const onPrimary = Colors.white;
+  static const onSecondary = Colors.white;
+  static const textPrimary = Color(0xFF1A2B3C);
+  static const textSecondary = Color(0xFF5A6A7A);
+  static const textHint = Color(0xFFADB5BD);
+
+  // Semantic
+  static const success = Color(0xFF4CAF50);
+  static const error = Color(0xFFE53935);
+  static const warning = Color(0xFFFFB300);
+
+  // Map overlays
+  static const mapCourse = Color(0xFF4CAF50);   // Green dots – recommended course
+  static const mapCafe = Color(0xFFF28C28);     // Orange dots – cafe POI
+  static const mapRoute = Color(0xFFF28C28);    // Route polyline
+  static const mapOrigin = Color(0xFF4CAF50);   // Current location
+  static const mapDestination = Color(0xFFE53935);
+
+  // Daylight bar
+  static const sunrise = Color(0xFFFFB300);
+  static const sunset = Color(0xFF5C6BC0);
+}
+
+// ── Typography ────────────────────────────────────────────────────────────────
+
+class AppTextStyles {
+  AppTextStyles._();
+
+  static TextStyle get headlineXL => GoogleFonts.plusJakartaSans(
+        fontSize: 28,
+        fontWeight: FontWeight.w800,
+        color: AppColors.textPrimary,
+        height: 1.2,
+      );
+
+  static TextStyle get headlineLG => GoogleFonts.plusJakartaSans(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+        height: 1.3,
+      );
+
+  static TextStyle get headlineMD => GoogleFonts.plusJakartaSans(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+        height: 1.4,
+      );
+
+  static TextStyle get titleSM => GoogleFonts.plusJakartaSans(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get bodyLG => GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textPrimary,
+        height: 1.6,
+      );
+
+  static TextStyle get bodyMD => GoogleFonts.plusJakartaSans(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: AppColors.textPrimary,
+        height: 1.5,
+      );
+
+  static TextStyle get labelLG => GoogleFonts.plusJakartaSans(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+        letterSpacing: 0.1,
+      );
+
+  static TextStyle get labelMD => GoogleFonts.plusJakartaSans(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textPrimary,
+      );
+
+  static TextStyle get labelSM => GoogleFonts.plusJakartaSans(
+        fontSize: 10,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textSecondary,
+      );
+}
+
+// ── ThemeData ─────────────────────────────────────────────────────────────────
+
+class AppTheme {
+  AppTheme._();
+
+  static ThemeData get light {
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        tertiary: AppColors.tertiary,
+        surface: AppColors.surface,
+        error: AppColors.error,
+        onPrimary: AppColors.onPrimary,
+        onSecondary: AppColors.onSecondary,
+        onSurface: AppColors.textPrimary,
+      ),
+      scaffoldBackgroundColor: AppColors.background,
+      textTheme: GoogleFonts.plusJakartaSansTextTheme(),
+    );
+
+    return base.copyWith(
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        backgroundColor: AppColors.secondary,
+        foregroundColor: Colors.white,
+        centerTitle: false,
+        titleTextStyle: AppTextStyles.headlineMD.copyWith(color: Colors.white),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+          textStyle: AppTextStyles.labelLG,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          elevation: 0,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.secondary,
+          textStyle: AppTextStyles.labelLG,
+          side: const BorderSide(color: AppColors.secondary, width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          textStyle: AppTextStyles.labelLG,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.textHint),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.textHint.withValues(alpha: 0.5)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        labelStyle: AppTextStyles.bodyMD.copyWith(color: AppColors.textSecondary),
+        hintStyle: AppTextStyles.bodyMD.copyWith(color: AppColors.textHint),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        shadowColor: AppColors.secondary.withValues(alpha: 0.08),
+      ),
+      dividerTheme: DividerThemeData(
+        color: AppColors.textHint.withValues(alpha: 0.3),
+        thickness: 1,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        contentTextStyle: AppTextStyles.bodyMD.copyWith(color: Colors.white),
+      ),
+    );
+  }
+}
+
+// ── Reusable Button Components ────────────────────────────────────────────────
+
+/// Primary filled button
+class YuruPrimaryButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+  final double? width;
+  final IconData? icon;
+
+  const YuruPrimaryButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.width,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: icon != null ? Icon(icon, size: 18) : const SizedBox.shrink(),
+        label: Text(label),
+      ),
+    );
+  }
+}
+
+/// Inverted (dark navy filled) button
+class YuruInvertedButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+  final double? width;
+
+  const YuruInvertedButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.secondary,
+          foregroundColor: Colors.white,
+          textStyle: AppTextStyles.labelLG,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          elevation: 0,
+        ),
+        child: Text(label),
+      ),
+    );
+  }
+}
+
+/// Outlined (border only) button
+class YuruOutlinedButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+  final double? width;
+  final Widget? leading;
+
+  const YuruOutlinedButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.width,
+    this.leading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (leading != null) ...[leading!, const SizedBox(width: 10)],
+            Text(label),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Floating map control button (circular, white)
+class YuruMapControlButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double size;
+  final Color? iconColor;
+  final Color? bgColor;
+
+  const YuruMapControlButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    this.size = 44,
+    this.iconColor,
+    this.bgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: bgColor ?? Colors.white,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.secondary.withValues(alpha: 0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          size: size * 0.45,
+          color: iconColor ?? AppColors.secondary,
+        ),
+      ),
+    );
+  }
+}
+
+/// Header icon button (square rounded, used in app header row)
+class YuruHeaderIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool active;
+
+  const YuruHeaderIconButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    this.active = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: active ? AppColors.primary.withValues(alpha: 0.15) : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.secondary.withValues(alpha: 0.12),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          size: 20,
+          color: active ? AppColors.primary : AppColors.secondary,
+        ),
+      ),
+    );
+  }
+}
