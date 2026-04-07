@@ -79,6 +79,8 @@ class MapInteractionState {
   final List<LatLng> waypoints; // 다중 경유지
   final double distanceKm;
   final bool isLoading;
+  final List<LatLng> routePolyline; // 계산된 경로 좌표
+  final int selectedRouteIdx; // 0: 시골길, 1: 지방도로, 2: 국도
 
   const MapInteractionState({
     this.mode = MapInteractionMode.idle,
@@ -86,6 +88,8 @@ class MapInteractionState {
     this.waypoints = const [],
     this.distanceKm = 0,
     this.isLoading = false,
+    this.routePolyline = const [],
+    this.selectedRouteIdx = 2,
   });
 
   /// 단일 경유지 편의 getter (기존 코드 호환)
@@ -97,8 +101,11 @@ class MapInteractionState {
     List<LatLng>? waypoints,
     double? distanceKm,
     bool? isLoading,
+    List<LatLng>? routePolyline,
+    int? selectedRouteIdx,
     bool clearDestination = false,
     bool clearWaypoints = false,
+    bool clearRoute = false,
   }) {
     return MapInteractionState(
       mode: mode ?? this.mode,
@@ -106,6 +113,8 @@ class MapInteractionState {
       waypoints: clearWaypoints ? [] : waypoints ?? this.waypoints,
       distanceKm: distanceKm ?? this.distanceKm,
       isLoading: isLoading ?? this.isLoading,
+      routePolyline: clearRoute ? [] : routePolyline ?? this.routePolyline,
+      selectedRouteIdx: selectedRouteIdx ?? this.selectedRouteIdx,
     );
   }
 }
@@ -150,6 +159,12 @@ class MapInteractionNotifier extends Notifier<MapInteractionState> {
   }
 
   void setLoading(bool v) => state = state.copyWith(isLoading: v);
+
+  void setRoutePolyline(List<LatLng> points) =>
+      state = state.copyWith(routePolyline: points);
+
+  void setSelectedRouteIdx(int idx) =>
+      state = state.copyWith(selectedRouteIdx: idx);
 
   void reset() => state = const MapInteractionState();
 }

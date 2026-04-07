@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/slider_start_button.dart';
 import '../../../models/poi.dart';
+import '../../../services/native_engine.dart';
 import '../providers/map_providers.dart';
 import '../../navigation/presentation/nav_screen.dart';
 
@@ -71,7 +72,6 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
 
   // Course sheet
   bool _showCourseSheet = false;
-  int _selectedRouteIdx = 2; // 기본: 국도(빠르게)
 
   // Touch overlay
   LatLng? _touchPoint;
@@ -221,6 +221,11 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
       _touchPoint = null;
     });
     _sheetCtrl.forward();
+
+    // 기본 선택 경로(국도)로 즉시 경로 계산 시작
+    _onRouteCardSelect(
+      ref.read(mapInteractionProvider).selectedRouteIdx,
+    );
   }
 
   void _clearDestination() {
@@ -231,14 +236,47 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
       _touchPoint = null;
     });
     _sheetCtrl.reverse();
+    _recenterMap();
   }
 
   void _startNavigation() {
-    final dest = ref.read(mapInteractionProvider).destination;
+    final state = ref.read(mapInteractionProvider);
+    final dest = state.destination;
     if (dest == null) return;
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => NavScreen(destination: dest)),
+      MaterialPageRoute(
+        builder: (_) => NavScreen(
+          destination: dest,
+          waypoints: state.waypoints,
+          routePolyline: state.routePolyline,
+        ),
+      ),
     );
+  }
+
+  Future<void> _onRouteCardSelect(int idx) async {
+    final state = ref.read(mapInteractionProvider);
+    final dest = state.destination;
+    if (dest == null) return;
+
+    ref.read(mapInteractionProvider.notifier).setSelectedRouteIdx(idx);
+    ref.read(mapInteractionProvider.notifier).setLoading(true);
+
+    try {
+      final points = await NativeEngine.calcDummyRoute(
+        origin: _origin,
+        destination: dest,
+        waypoints: state.waypoints,
+        routeType: idx,
+      );
+      if (mounted) {
+        ref.read(mapInteractionProvider.notifier).setRoutePolyline(points);
+      }
+    } finally {
+      if (mounted) {
+        ref.read(mapInteractionProvider.notifier).setLoading(false);
+      }
+    }
   }
 
   // ── Toasts / Dialogs ──────────────────────────────────────────────────────
@@ -317,6 +355,8 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
     final pois = ref.watch(poiListProvider);
     final dest = interaction.destination;
     final waypoint = interaction.waypoint;
+    final routePolyline = interaction.routePolyline;
+    final selectedRouteIdx = interaction.selectedRouteIdx;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -345,6 +385,18 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
                 maxZoom: 19,
               ),
 
+              // 경로 폴리라인
+              if (routePolyline.length >= 2)
+                PolylineLayer(polylines: [
+                  Polyline(
+                    points: routePolyline,
+                    color: AppColors.primary.withValues(alpha: 0.85),
+                    strokeWidth: 4.0,
+                    strokeCap: StrokeCap.round,
+                    strokeJoin: StrokeJoin.round,
+                  ),
+                ]),
+
               // POI dots
               if (pois.isNotEmpty)
                 MarkerLayer(markers: _buildPoiMarkers(pois)),
@@ -361,6 +413,20 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
                     borderColor:
                         AppColors.secondary.withValues(alpha: 0.35),
                     borderStrokeWidth: 1.2,
+                  ),
+                ]),
+
+              // 목적지-현위치 사이 반경 원 (목적지 확정 후)
+              if (dest != null)
+                CircleLayer(circles: [
+                  CircleMarker(
+                    point: _origin,
+                    radius: interaction.distanceKm * 1000,
+                    useRadiusInMeter: true,
+                    color: AppColors.mapOrigin.withValues(alpha: 0.05),
+                    borderColor:
+                        AppColors.mapOrigin.withValues(alpha: 0.25),
+                    borderStrokeWidth: 1.0,
                   ),
                 ]),
 
@@ -544,9 +610,8 @@ class _MainMapScreenState extends ConsumerState<MainMapScreen>
                     position: _sheetSlide,
                     child: _CourseSheet(
                       distanceKm: interaction.distanceKm,
-                      selectedIdx: _selectedRouteIdx,
-                      onSelect: (idx) =>
-                          setState(() => _selectedRouteIdx = idx),
+                      selectedIdx: selectedRouteIdx,
+                      onSelect: _onRouteCardSelect,
                       onStart: _startNavigation,
                       onClose: _clearDestination,
                     ),

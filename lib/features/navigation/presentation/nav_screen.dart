@@ -23,7 +23,15 @@ const _kSub     = Color(0xFF888888);
 
 class NavScreen extends ConsumerStatefulWidget {
   final LatLng? destination;
-  const NavScreen({super.key, this.destination});
+  final List<LatLng> waypoints;
+  final List<LatLng> routePolyline;
+
+  const NavScreen({
+    super.key,
+    this.destination,
+    this.waypoints = const [],
+    this.routePolyline = const [],
+  });
 
   @override
   ConsumerState<NavScreen> createState() => _NavScreenState();
@@ -167,7 +175,20 @@ class _NavScreenState extends ConsumerState<NavScreen>
                 ]),
                 child: const SizedBox.expand(),
               ),
+              // 경로 폴리라인
+              if (widget.routePolyline.length >= 2)
+                PolylineLayer(polylines: [
+                  Polyline(
+                    points: widget.routePolyline,
+                    color: const Color(0xFFF28C28).withValues(alpha: 0.9),
+                    strokeWidth: 4.5,
+                    strokeCap: StrokeCap.round,
+                    strokeJoin: StrokeJoin.round,
+                  ),
+                ]),
+
               MarkerLayer(markers: [
+                // 현위치
                 Marker(
                   point: _currentPos,
                   width: 24,
@@ -183,6 +204,21 @@ class _NavScreenState extends ConsumerState<NavScreen>
                     ),
                   ),
                 ),
+                // 경유지
+                ...widget.waypoints.map(
+                  (wp) => Marker(
+                    point: wp,
+                    width: 34,
+                    height: 34,
+                    alignment: Alignment.topCenter,
+                    child: const Icon(
+                      Icons.location_pin,
+                      color: Color(0xFFFFB300),
+                      size: 34,
+                    ),
+                  ),
+                ),
+                // 목적지
                 if (widget.destination != null)
                   Marker(
                     point: widget.destination!,

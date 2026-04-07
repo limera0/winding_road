@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:latlong2/latlong.dart';
+
 /// GPS 포인트
 class GpsPoint {
   final double lat;
@@ -126,5 +128,62 @@ class NativeEngine {
             sinHalfLon *
             sinHalfLon;
     return 2 * R * math.asin(math.sqrt(h));
+  }
+
+  // ── 경로 생성 (더미) ─────────────────────────────────────────
+  //
+  // Rust 엔진에 실제 경로 계획 기능이 완성되면 이 함수를 native 바인딩으로 교체.
+  // routeType: 0=country(시골길), 1=provincial(지방도로), 2=national(국도)
+  //
+  // 알고리즘: origin→dest 직선 위에 N개 웨이포인트를 보간하면서
+  // 경로 타입에 따라 서로 다른 강도의 사인파 곡률을 적용해
+  // 느긋한 꼬불꼬불 경로 vs 직선에 가까운 경로를 시뮬레이션한다.
+  static Future<List<LatLng>> calcDummyRoute({
+    required LatLng origin,
+    required LatLng destination,
+    List<LatLng> waypoints = const [],
+    int routeType = 2,
+  }) async {
+    // 경로 타입별 파라미터 (amplitude=곡률, steps=포인트 수)
+    const params = [
+      (amplitude: 0.018, steps: 28), // 시골길
+      (amplitude: 0.010, steps: 22), // 지방도로
+      (amplitude: 0.004, steps: 16), // 국도
+    ];
+    final p = params[routeType.clamp(0, 2)];
+
+    // 경유지 포함 전체 구간을 분할해서 각 구간별로 곡선 생성
+    final allPoints = [origin, ...waypoints, destination];
+    final result = <LatLng>[];
+    final rng = math.Random(42);
+
+    for (int seg = 0; seg < allPoints.length - 1; seg++) {
+      final from = allPoints[seg];
+      final to = allPoints[seg + 1];
+
+      final dLat = to.latitude - from.latitude;
+      final dLng = to.longitude - from.longitude;
+
+      // 법선 방향 (경로 수직)
+      final len = math.sqrt(dLat * dLat + dLng * dLng);
+      final nx = len > 0 ? -dLng / len : 0.0;
+      final ny = len > 0 ? dLat / len : 0.0;
+
+      // 랜덤 위상 오프셋으로 자연스러운 형태 부여
+      final phaseOffset = rng.nextDouble() * math.pi;
+      final waveCount = routeType == 0 ? 3.0 : routeType == 1 ? 2.0 : 1.0;
+
+      for (int i = 0; i <= p.steps; i++) {
+        final t = i / p.steps;
+        final wave = math.sin(t * math.pi * waveCount + phaseOffset);
+        final lat = from.latitude + dLat * t + ny * wave * p.amplitude;
+        final lng = from.longitude + dLng * t + nx * wave * p.amplitude;
+        if (i > 0 || seg == 0) result.add(LatLng(lat, lng));
+      }
+    }
+
+    // 실제 Rust 호출을 모사하는 비동기 딜레이 (300ms)
+    await Future.delayed(const Duration(milliseconds: 300));
+    return result;
   }
 }
